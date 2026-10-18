@@ -1,16 +1,20 @@
 # Neolithic Pick
 
-An experimental Three.js scholarly viewer for an Early Bronze Age antler pick.
+A data-driven Three.js scholarly viewer for a Neolithic deer-antler pick associated
+with Rijckholt / Sint Geertruid.
 
 The project revisits a photogrammetric model created in 2022 and explores how a
 digitised cultural-heritage object can be presented with transparent provenance,
 spatial annotation, accessible interaction, and reusable metadata.
 
-## Project status
+## Viewer features
 
-The original textured photogrammetric model is now loaded in the viewer. Model
-optimisation, structured object metadata, and scholarly annotations will be added in
-subsequent iterations.
+- Six evidence-labelled spatial annotations with shareable deep links
+- Source-derived and editorial placements recorded separately
+- Keyboard-accessible annotation list and complete non-visual descriptions
+- Explicit provenance gaps rather than inferred catalogue data
+- Reduced-motion camera navigation and responsive layouts
+- Locally bundled glTF assets with a 4096 px WebP delivery texture
 
 ## Development
 
@@ -33,13 +37,14 @@ pnpm check
 pnpm build
 ```
 
-## Planned workflow
+While the development server is running, append
+`?simulate-model-error` to the local URL to verify the model-load failure state.
 
-1. Optimise the original glTF geometry and texture for browser delivery.
-2. Record provenance, capture, processing, licence, and object metadata.
-3. Add evidence-linked spatial annotations and interpretive uncertainty.
-4. Test keyboard, touch, reduced-motion, and small-screen interactions.
-5. Measure loading and rendering performance on representative devices.
+The heritage record and annotation copy live in `src/heritage-data.ts`. All
+source positions, camera poses, evidence references, confidence labels, and
+editorial placement notes are reviewable there. The three Sketchfab hotspot
+vectors remain untouched beside their transformed local-export coordinates, so
+the export-root adjustment is auditable.
 
 ## Technology
 
@@ -49,6 +54,7 @@ pnpm build
 
 ## Licence
 
-Source-code licensing and reuse terms will be documented before the first
-public release. Rights and attribution for the digitised object and its imagery
-will be recorded separately from the software licence.
+The 3D model is published under
+[CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) by Centre Céramique
+Maastricht and is credited in the interface. Source-code licensing remains to be
+chosen before a public software release.

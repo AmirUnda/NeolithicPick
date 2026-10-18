@@ -1,214 +1,262 @@
 import './styles.css';
 
-import * as THREE from 'three';
-import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import {
+  annotationHash,
+  parseAnnotationHash,
+  validateHeritageRecord,
+} from './annotation-utils';
+import { heritageRecord } from './heritage-data';
+import type { Annotation, Source } from './heritage-data';
+import { HeritageViewer } from './viewer';
+import type { ViewerState } from './viewer';
 
-const canvasRootElement = document.querySelector<HTMLDivElement>('#canvas-root');
-const statusElement = document.querySelector<HTMLDivElement>('#viewer-status');
-const statusTextElement = document.querySelector<HTMLSpanElement>('#viewer-status-text');
-
-if (!canvasRootElement || !statusElement || !statusTextElement) {
-  throw new Error('A required viewer element is missing.');
+function requireElement<T extends Element>(selector: string): T {
+  const element = document.querySelector<T>(selector);
+  if (!element) throw new Error(`Required element not found: ${selector}`);
+  return element;
 }
 
-const canvasRoot: HTMLDivElement = canvasRootElement;
-const viewerStatus: HTMLDivElement = statusElement;
-const viewerStatusText: HTMLSpanElement = statusTextElement;
-
-const scene = new THREE.Scene();
-scene.background = new THREE.Color(0x181712);
-scene.fog = new THREE.Fog(0x181712, 6, 14);
-
-const camera = new THREE.PerspectiveCamera(38, 1, 0.01, 100);
-camera.position.set(3.4, 2.2, 4.6);
-
-const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
-renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-renderer.outputColorSpace = THREE.SRGBColorSpace;
-renderer.toneMapping = THREE.ACESFilmicToneMapping;
-renderer.toneMappingExposure = 1;
-canvasRoot.append(renderer.domElement);
-
-const controls = new OrbitControls(camera, renderer.domElement);
-controls.enableDamping = true;
-controls.target.set(0, 0.35, 0);
-controls.maxPolarAngle = Math.PI * 0.9;
-
-scene.add(new THREE.HemisphereLight(0xf4ead7, 0x29261f, 2.4));
-
-const keyLight = new THREE.DirectionalLight(0xfff4df, 3.2);
-keyLight.position.set(3, 4, 2);
-scene.add(keyLight);
-
-const rimLight = new THREE.DirectionalLight(0x9db4aa, 1.8);
-rimLight.position.set(-3, 1.5, -2);
-scene.add(rimLight);
-
-const placeholder = new THREE.Mesh(
-  new THREE.IcosahedronGeometry(0.82, 2),
-  new THREE.MeshStandardMaterial({
-    color: 0x9a6847,
-    metalness: 0,
-    roughness: 0.82,
-    wireframe: true,
-  }),
+const canvasRoot = requireElement<HTMLDivElement>('#canvas-root');
+const markerLayer = requireElement<HTMLDivElement>('#annotation-layer');
+const statusElement = requireElement<HTMLDivElement>('#viewer-status');
+const statusTextElement = requireElement<HTMLSpanElement>('#viewer-status-text');
+const annotationList = requireElement<HTMLUListElement>('#annotation-list');
+const detailRegion = requireElement<HTMLElement>('#annotation-detail');
+const detailType = requireElement<HTMLParagraphElement>('#annotation-detail-type');
+const detailTitle = requireElement<HTMLHeadingElement>('#annotation-detail-title');
+const detailText = requireElement<HTMLParagraphElement>('#annotation-detail-text');
+const detailEvidence = requireElement<HTMLParagraphElement>(
+  '#annotation-detail-evidence',
 );
-placeholder.position.y = 0.45;
-placeholder.rotation.set(-0.2, 0.15, 0.08);
-scene.add(placeholder);
-
-const ground = new THREE.Mesh(
-  new THREE.CircleGeometry(2.4, 64),
-  new THREE.MeshBasicMaterial({ color: 0x222019, transparent: true, opacity: 0.8 }),
+const detailPlacement = requireElement<HTMLParagraphElement>(
+  '#annotation-detail-placement',
 );
-ground.rotation.x = -Math.PI / 2;
-ground.position.y = -0.4;
-scene.add(ground);
+const detailSources = requireElement<HTMLUListElement>('#annotation-detail-sources');
+const detailCounter = requireElement<HTMLSpanElement>('#annotation-counter');
+const metadataList = requireElement<HTMLDListElement>('#metadata-list');
+const sourceList = requireElement<HTMLUListElement>('#source-list');
+const previousButton = requireElement<HTMLButtonElement>('#annotation-previous');
+const nextButton = requireElement<HTMLButtonElement>('#annotation-next');
+const closeButton = requireElement<HTMLButtonElement>('#annotation-close');
+const resetButton = requireElement<HTMLButtonElement>('#reset-view');
 
+const annotationsById = new Map(
+  heritageRecord.annotations.map((annotation) => [annotation.id, annotation]),
+);
+const validAnnotationIds = new Set(annotationsById.keys());
+const sourcesById = new Map(heritageRecord.sources.map((source) => [source.id, source]));
 const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-let loadedModel: THREE.Object3D | null = null;
+const simulateModelError =
+  import.meta.env.DEV &&
+  new URLSearchParams(window.location.search).has('simulate-model-error');
+const validationIssues = validateHeritageRecord(heritageRecord);
+let selectedAnnotationId: string | null = null;
 
-function updateStatus(
-  message: string,
-  state: 'loading' | 'ready' | 'error' = 'loading',
-): void {
-  viewerStatus.dataset.state = state;
-  viewerStatusText.textContent = message;
+function updateStatus(message: string, state: ViewerState): void {
+  statusElement.dataset.state = state;
+  statusTextElement.textContent = message;
 }
 
-function disposeMaterial(material: THREE.Material): void {
-  for (const value of Object.values(material)) {
-    if (value instanceof THREE.Texture) {
-      value.dispose();
-    }
+function externalLink(source: Source): HTMLAnchorElement {
+  const link = document.createElement('a');
+  link.href = source.url;
+  link.target = '_blank';
+  link.rel = 'noreferrer';
+  link.textContent = source.shortLabel;
+  return link;
+}
+
+function renderMetadata(): void {
+  const fragment = document.createDocumentFragment();
+  for (const field of heritageRecord.metadata) {
+    const wrapper = document.createElement('div');
+    wrapper.dataset.status = field.status;
+    const term = document.createElement('dt');
+    term.textContent = field.label;
+    const description = document.createElement('dd');
+    description.textContent = field.value;
+    wrapper.append(term, description);
+    fragment.append(wrapper);
+  }
+  metadataList.replaceChildren(fragment);
+}
+
+function renderSourceList(): void {
+  const fragment = document.createDocumentFragment();
+  for (const source of heritageRecord.sources) {
+    const item = document.createElement('li');
+    const citation = document.createElement('p');
+    citation.textContent = source.citation;
+    item.append(externalLink(source), citation);
+    fragment.append(item);
+  }
+  sourceList.replaceChildren(fragment);
+}
+
+function renderAnnotationList(): void {
+  const fragment = document.createDocumentFragment();
+  for (const annotation of heritageRecord.annotations) {
+    const item = document.createElement('li');
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'annotation-list-button';
+    button.dataset.annotationId = annotation.id;
+    button.dataset.annotationType = annotation.type;
+    button.setAttribute('aria-pressed', 'false');
+
+    const number = document.createElement('span');
+    number.className = 'annotation-list-number';
+    number.setAttribute('aria-hidden', 'true');
+    number.textContent = String(annotation.index);
+    const copy = document.createElement('span');
+    const label = document.createElement('span');
+    label.className = 'annotation-list-type';
+    label.textContent = annotation.type;
+    const title = document.createElement('span');
+    title.className = 'annotation-list-title';
+    title.textContent = annotation.title;
+    copy.append(label, title);
+    button.append(number, copy);
+    button.addEventListener('click', () => selectAnnotation(annotation.id, 'push'));
+    item.append(button);
+    fragment.append(item);
+  }
+  annotationList.replaceChildren(fragment);
+}
+
+function renderDetail(annotation: Annotation | null): void {
+  detailRegion.dataset.empty = String(!annotation);
+  previousButton.disabled = !annotation;
+  nextButton.disabled = !annotation;
+  closeButton.disabled = !annotation;
+
+  if (!annotation) {
+    detailType.textContent = 'Annotation guide';
+    detailTitle.textContent = 'Explore the object';
+    detailText.textContent =
+      'Choose a numbered marker or an entry below to examine the object, its archaeological context and the limits of the available record.';
+    detailEvidence.textContent =
+      'Six annotations · three source positions · three editorial positions';
+    detailPlacement.textContent =
+      'Every annotation is also available from the list below.';
+    detailCounter.textContent = 'No annotation selected';
+    detailSources.replaceChildren();
+    return;
   }
 
-  material.dispose();
-}
+  detailType.textContent = annotation.type;
+  detailTitle.textContent = annotation.title;
+  detailText.textContent = annotation.text;
+  detailEvidence.textContent = `${annotation.evidence} · ${annotation.confidence} source confidence`;
+  detailPlacement.textContent = `${
+    annotation.anchor.placementOrigin === 'sketchfab'
+      ? 'Source-derived placement'
+      : 'Editorial placement'
+  }: ${annotation.anchor.placementNote}`;
+  detailCounter.textContent = `${annotation.index} of ${heritageRecord.annotations.length}`;
 
-function disposeObject(root: THREE.Object3D): void {
-  root.traverse((object) => {
-    if (!(object instanceof THREE.Mesh)) {
-      return;
-    }
-
-    object.geometry.dispose();
-
-    if (Array.isArray(object.material)) {
-      object.material.forEach(disposeMaterial);
-    } else {
-      disposeMaterial(object.material);
-    }
+  const sourceItems = annotation.sources.flatMap((id) => {
+    const source = sourcesById.get(id);
+    if (!source) return [];
+    const item = document.createElement('li');
+    item.append(externalLink(source));
+    return [item];
   });
+  detailSources.replaceChildren(...sourceItems);
 }
 
-function frameModel(model: THREE.Object3D): void {
-  const sourceBounds = new THREE.Box3().setFromObject(model);
-  const sourceSize = sourceBounds.getSize(new THREE.Vector3());
-  const longestSide = Math.max(sourceSize.x, sourceSize.y, sourceSize.z);
-
-  if (!Number.isFinite(longestSide) || longestSide <= 0) {
-    throw new Error('The model has invalid spatial bounds.');
+function updateSelectionStyles(id: string | null): void {
+  for (const button of annotationList.querySelectorAll<HTMLButtonElement>(
+    '.annotation-list-button',
+  )) {
+    const active = button.dataset.annotationId === id;
+    button.dataset.active = String(active);
+    button.setAttribute('aria-pressed', String(active));
   }
-
-  model.scale.multiplyScalar(3.4 / longestSide);
-  model.updateMatrixWorld(true);
-
-  const bounds = new THREE.Box3().setFromObject(model);
-  const centre = bounds.getCenter(new THREE.Vector3());
-  model.position.x -= centre.x;
-  model.position.z -= centre.z;
-  model.position.y += ground.position.y - bounds.min.y + 0.02;
-  model.updateMatrixWorld(true);
-
-  const framedBounds = new THREE.Box3().setFromObject(model);
-  const framedSize = framedBounds.getSize(new THREE.Vector3());
-  const framedCentre = framedBounds.getCenter(new THREE.Vector3());
-  const radius = framedSize.length() * 0.5;
-
-  controls.target.copy(framedCentre);
-  controls.minDistance = Math.max(radius * 0.55, 0.5);
-  controls.maxDistance = Math.max(radius * 5, 8);
-
-  const verticalFov = THREE.MathUtils.degToRad(camera.fov);
-  const distance = radius / Math.sin(verticalFov * 0.5);
-  camera.near = Math.max(distance / 100, 0.01);
-  camera.far = Math.max(distance * 20, 100);
-  camera.position
-    .set(0.72, 0.42, 1)
-    .normalize()
-    .multiplyScalar(distance * 1.08)
-    .add(framedCentre);
-  camera.updateProjectionMatrix();
-  controls.update();
 }
 
-const modelUrl = `${import.meta.env.BASE_URL}models/antler_pick/scene.gltf`;
-const loader = new GLTFLoader();
+type HistoryMode = 'push' | 'replace' | 'none';
 
-loader.load(
-  modelUrl,
-  (gltf) => {
-    try {
-      loadedModel = gltf.scene;
-      frameModel(loadedModel);
-      scene.add(loadedModel);
-
-      scene.remove(placeholder);
-      disposeObject(placeholder);
-      updateStatus('Model loaded · 67,998 triangles', 'ready');
-    } catch (error) {
-      loadedModel = null;
-      updateStatus('Model could not be prepared', 'error');
-      console.error('Failed to prepare the antler-pick model.', error);
-    }
-  },
-  ({ loaded, total }) => {
-    if (total > 0) {
-      const percentage = Math.min(Math.round((loaded / total) * 100), 100);
-      updateStatus(`Loading model · ${percentage}%`);
-    } else {
-      updateStatus('Loading model…');
-    }
-  },
-  (error) => {
-    updateStatus('Model could not be loaded', 'error');
-    console.error('Failed to load the antler-pick model.', error);
-  },
-);
-
-function resize(): void {
-  const { clientWidth, clientHeight } = canvasRoot;
-
-  camera.aspect = clientWidth / Math.max(clientHeight, 1);
-  camera.updateProjectionMatrix();
-  renderer.setSize(clientWidth, clientHeight, false);
+function writeSelectionToHistory(
+  id: string | null,
+  mode: Exclude<HistoryMode, 'none'>,
+): void {
+  const url = new URL(window.location.href);
+  url.hash = id ? annotationHash(id) : '';
+  window.history[mode === 'push' ? 'pushState' : 'replaceState']({}, '', url);
 }
 
-function render(timestamp: DOMHighResTimeStamp): void {
-  if (!reducedMotion && placeholder.parent) {
-    placeholder.rotation.y = timestamp * 0.00008;
-  }
-
-  controls.update();
-  renderer.render(scene, camera);
+function selectAnnotation(
+  id: string | null,
+  historyMode: HistoryMode = 'none',
+  moveCamera = true,
+): void {
+  const annotation = id ? (annotationsById.get(id) ?? null) : null;
+  selectedAnnotationId = annotation?.id ?? null;
+  updateSelectionStyles(selectedAnnotationId);
+  renderDetail(annotation);
+  viewer.setActiveAnnotation(selectedAnnotationId, moveCamera);
+  if (historyMode !== 'none') writeSelectionToHistory(selectedAnnotationId, historyMode);
 }
 
-const resizeObserver = new ResizeObserver(resize);
-resizeObserver.observe(canvasRoot);
-renderer.setAnimationLoop(render);
+function stepAnnotation(direction: -1 | 1): void {
+  if (!selectedAnnotationId) return;
+  const currentIndex = heritageRecord.annotations.findIndex(
+    (annotation) => annotation.id === selectedAnnotationId,
+  );
+  const nextIndex =
+    (currentIndex + direction + heritageRecord.annotations.length) %
+    heritageRecord.annotations.length;
+  const annotation = heritageRecord.annotations[nextIndex];
+  if (annotation) selectAnnotation(annotation.id, 'push');
+}
 
-window.addEventListener('pagehide', () => {
-  resizeObserver.disconnect();
-  controls.dispose();
-  if (placeholder.parent) {
-    disposeObject(placeholder);
-  }
-  if (loadedModel) {
-    disposeObject(loadedModel);
-  }
-  ground.geometry.dispose();
-  (ground.material as THREE.Material).dispose();
-  renderer.dispose();
+renderMetadata();
+renderSourceList();
+renderAnnotationList();
+renderDetail(null);
+
+if (validationIssues.length > 0) {
+  updateStatus('Annotation data could not be validated', 'error');
+  throw new Error(validationIssues.join('\n'));
+}
+
+const viewer = new HeritageViewer({
+  canvasRoot,
+  markerLayer,
+  annotations: heritageRecord.annotations,
+  modelUrl: simulateModelError
+    ? `${import.meta.env.BASE_URL}models/antler_pick/missing-model.gltf`
+    : `${import.meta.env.BASE_URL}models/antler_pick/scene.gltf`,
+  reducedMotion,
+  onStatus: updateStatus,
+  onAnnotationSelect: (id) => selectAnnotation(id, 'push'),
 });
+
+previousButton.addEventListener('click', () => stepAnnotation(-1));
+nextButton.addEventListener('click', () => stepAnnotation(1));
+closeButton.addEventListener('click', () => selectAnnotation(null, 'push', false));
+resetButton.addEventListener('click', () => viewer.resetView());
+
+window.addEventListener('hashchange', () => {
+  selectAnnotation(parseAnnotationHash(window.location.hash, validAnnotationIds), 'none');
+});
+
+window.addEventListener('keydown', (event) => {
+  if (event.key === 'Escape' && selectedAnnotationId) {
+    selectAnnotation(null, 'push', false);
+    closeButton.focus();
+  }
+});
+
+void viewer
+  .load()
+  .then(() => {
+    const initialId = parseAnnotationHash(window.location.hash, validAnnotationIds);
+    if (initialId) selectAnnotation(initialId, 'none');
+  })
+  .catch(() => {
+    markerLayer.dataset.disabled = 'true';
+  });
+
+window.addEventListener('pagehide', () => viewer.dispose(), { once: true });

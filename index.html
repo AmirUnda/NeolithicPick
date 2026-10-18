@@ -5,21 +5,30 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta
       name="description"
-      content="An experimental Three.js scholarly viewer for an Early Bronze Age antler pick."
+      content="An accessible Three.js study of a Neolithic deer-antler pick from Rijckholt / Sint Geertruid."
     />
     <meta name="theme-color" content="#181712" />
-    <title>Neolithic Pick — A 3D Heritage Study</title>
+    <title>Neolithic Antler Pick — A 3D Heritage Study</title>
   </head>
   <body>
     <a class="skip-link" href="#about">Skip the 3D viewer</a>
 
     <main class="app-shell">
-      <section class="viewer" aria-label="Interactive 3D object viewer">
+      <figure
+        class="viewer"
+        aria-labelledby="viewer-title"
+        aria-describedby="model-description"
+      >
         <div id="canvas-root" class="canvas-root" aria-hidden="true"></div>
+        <div
+          id="annotation-layer"
+          class="annotation-layer"
+          aria-label="3D annotations"
+        ></div>
 
         <header class="viewer-header">
           <p class="eyebrow">Digital heritage study</p>
-          <h1>Neolithic Pick</h1>
+          <h1 id="viewer-title">Neolithic<br />Antler Pick</h1>
         </header>
 
         <div
@@ -33,57 +42,121 @@
           <span id="viewer-status-text">Loading model…</span>
         </div>
 
-        <p class="viewer-help">Drag to orbit · Scroll to zoom · Right-drag to pan</p>
-      </section>
+        <div class="viewer-controls" aria-label="3D view controls">
+          <button id="reset-view" class="viewer-control" type="button">Reset view</button>
+          <p class="viewer-help">Drag to orbit · Scroll to zoom · Right-drag to pan</p>
+        </div>
+
+        <figcaption id="model-description" class="sr-only">
+          Interactive 3D model of a pale beige-brown deer-antler pick, 44.2 centimetres
+          long. Its thick curved beam has a broad end, two projecting tines, and a long
+          tapered point. The complete description and all annotations follow in the
+          adjacent panel.
+        </figcaption>
+      </figure>
 
       <aside id="about" class="object-panel" tabindex="-1">
-        <p class="eyebrow">Early Bronze Age</p>
-        <h2>Antler pick</h2>
-        <p class="lede">
-          A browser-based scholarly presentation of a photogrammetric cultural-heritage
-          object, built with Three.js.
-        </p>
+        <header class="object-intro">
+          <div>
+            <p class="eyebrow">Neolithic · Rijckholt</p>
+            <h2>Antler pick</h2>
+          </div>
+          <p class="lede">
+            A photogrammetric record examined through visible evidence, archaeological
+            context and the limits of the surviving catalogue information.
+          </p>
+        </header>
 
-        <dl class="metadata">
-          <div>
-            <dt>Capture</dt>
-            <dd>Photogrammetry</dd>
-          </div>
-          <div>
-            <dt>Model created</dt>
-            <dd>2022</dd>
-          </div>
-          <div>
-            <dt>Viewer</dt>
-            <dd>Three.js</dd>
-          </div>
-        </dl>
-
-        <div class="notice">
-          <p class="notice-label">Model credit</p>
-          <p>
-            This work uses
-            <a
-              href="https://sketchfab.com/3d-models/antler-pick-497f2fdabecc44ecae461622d0450103"
-              target="_blank"
-              rel="noreferrer"
-              >“Antler Pick”</a
+        <section
+          id="annotation-detail"
+          class="annotation-detail"
+          data-empty="true"
+          aria-live="polite"
+          aria-atomic="true"
+        >
+          <div class="annotation-detail-heading">
+            <div>
+              <p id="annotation-detail-type" class="annotation-kind">Annotation guide</p>
+              <h3 id="annotation-detail-title">Explore the object</h3>
+            </div>
+            <button
+              id="annotation-close"
+              class="icon-button"
+              type="button"
+              aria-label="Close annotation"
+              disabled
             >
-            by
+              ×
+            </button>
+          </div>
+          <p id="annotation-detail-text" class="annotation-copy"></p>
+          <p id="annotation-detail-evidence" class="annotation-evidence"></p>
+          <p id="annotation-detail-placement" class="annotation-placement"></p>
+          <ul
+            id="annotation-detail-sources"
+            class="inline-sources"
+            aria-label="Sources"
+          ></ul>
+          <div class="annotation-pager">
+            <button id="annotation-previous" type="button" disabled>← Previous</button>
+            <span id="annotation-counter">No annotation selected</span>
+            <button id="annotation-next" type="button" disabled>Next →</button>
+          </div>
+        </section>
+
+        <nav class="annotation-index" aria-labelledby="annotation-index-title">
+          <div class="section-heading">
+            <p class="section-kicker">Guided reading</p>
+            <h3 id="annotation-index-title">Six points of inquiry</h3>
+          </div>
+          <ul id="annotation-list" class="annotation-list"></ul>
+          <p class="placement-legend">
+            <span class="legend-mark source" aria-hidden="true"></span> Source-derived
+            <span class="legend-mark editorial" aria-hidden="true"></span> Editorial
+          </p>
+        </nav>
+
+        <section class="record-section" aria-labelledby="record-title">
+          <div class="section-heading">
+            <p class="section-kicker">Object and model record</p>
+            <h3 id="record-title">What is documented</h3>
+          </div>
+          <dl id="metadata-list" class="metadata"></dl>
+          <p class="record-note">
+            “Not documented” is intentional: the public model record does not establish
+            the holding institution, inventory number or excavation context for this exact
+            object.
+          </p>
+        </section>
+
+        <section class="sources-section" aria-labelledby="sources-title">
+          <div class="section-heading">
+            <p class="section-kicker">Evidence trail</p>
+            <h3 id="sources-title">Sources</h3>
+          </div>
+          <ul id="source-list" class="source-list"></ul>
+        </section>
+
+        <footer class="model-credit">
+          <p class="notice-label">Model and reuse</p>
+          <p>
+            Model by Richard Stevenson and Héctor Amir Unda Garza; published by
             <a
               href="https://sketchfab.com/CentreCeramiqueMaastricht"
               target="_blank"
               rel="noreferrer"
               >Centre Céramique Maastricht</a
-            >, licensed under
+            >. The model is licensed under
             <a
               href="https://creativecommons.org/licenses/by/4.0/"
               target="_blank"
               rel="noreferrer"
               >CC BY 4.0</a
-            >.
+            >. This independent viewer uses an optimized texture derivative and identifies
+            editorial annotation placements separately from source-derived ones.
           </p>
-        </div>
+          <p>Three.js viewer and interpretation by Héctor Amir Unda Garza.</p>
+        </footer>
       </aside>
     </main>
 
