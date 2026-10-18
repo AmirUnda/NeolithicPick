@@ -22,9 +22,15 @@
           <h1>Neolithic Pick</h1>
         </header>
 
-        <div class="viewer-status" role="status" aria-live="polite">
+        <div
+          id="viewer-status"
+          class="viewer-status"
+          data-state="loading"
+          role="status"
+          aria-live="polite"
+        >
           <span class="status-dot" aria-hidden="true"></span>
-          Viewer foundation ready
+          <span id="viewer-status-text">Loading model…</span>
         </div>
 
         <p class="viewer-help">Drag to orbit · Scroll to zoom · Right-drag to pan</p>
@@ -54,10 +60,28 @@
         </dl>
 
         <div class="notice">
-          <p class="notice-label">Next iteration</p>
+          <p class="notice-label">Model credit</p>
           <p>
-            The optimised object model, provenance record, and evidence-linked annotations
-            will be introduced as separate, reviewable changes.
+            This work uses
+            <a
+              href="https://sketchfab.com/3d-models/antler-pick-497f2fdabecc44ecae461622d0450103"
+              target="_blank"
+              rel="noreferrer"
+              >“Antler Pick”</a
+            >
+            by
+            <a
+              href="https://sketchfab.com/CentreCeramiqueMaastricht"
+              target="_blank"
+              rel="noreferrer"
+              >Centre Céramique Maastricht</a
+            >, licensed under
+            <a
+              href="https://creativecommons.org/licenses/by/4.0/"
+              target="_blank"
+              rel="noreferrer"
+              >CC BY 4.0</a
+            >.
           </p>
         </div>
       </aside>

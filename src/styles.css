@@ -149,9 +149,20 @@ h2 {
 .status-dot {
   width: 0.45rem;
   height: 0.45rem;
-  background: #9fb692;
+  flex: 0 0 auto;
+  background: #bda885;
   border-radius: 50%;
+  box-shadow: 0 0 0 0.2rem rgb(189 168 133 / 15%);
+}
+
+.viewer-status[data-state='ready'] .status-dot {
+  background: #9fb692;
   box-shadow: 0 0 0 0.2rem rgb(159 182 146 / 15%);
+}
+
+.viewer-status[data-state='error'] .status-dot {
+  background: #d7866f;
+  box-shadow: 0 0 0 0.2rem rgb(215 134 111 / 15%);
 }
 
 .viewer-help {
@@ -226,6 +237,21 @@ h2 {
 
 .notice p:last-child {
   margin-bottom: 0;
+}
+
+.notice a {
+  color: #684a30;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.15em;
+}
+
+.notice a:hover {
+  color: #3d2b1c;
+}
+
+.notice a:focus-visible {
+  outline: 2px solid #876748;
+  outline-offset: 0.18rem;
 }
 
 .notice-label {

@@ -8,8 +8,9 @@ spatial annotation, accessible interaction, and reusable metadata.
 
 ## Project status
 
-The viewer foundation is in place. The optimised GLB model, object metadata, and
-scholarly annotations will be added in subsequent iterations.
+The original textured photogrammetric model is now loaded in the viewer. Model
+optimisation, structured object metadata, and scholarly annotations will be added in
+subsequent iterations.
 
 ## Development
 
@@ -34,7 +35,7 @@ pnpm build
 
 ## Planned workflow
 
-1. Export and optimise the original photogrammetric model as GLB.
+1. Optimise the original glTF geometry and texture for browser delivery.
 2. Record provenance, capture, processing, licence, and object metadata.
 3. Add evidence-linked spatial annotations and interpretive uncertainty.
 4. Test keyboard, touch, reduced-motion, and small-screen interactions.

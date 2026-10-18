@@ -1,0 +1,11 @@
+Model Information:
+* title:	Antler Pick
+* source:	https://sketchfab.com/3d-models/antler-pick-497f2fdabecc44ecae461622d0450103
+* author:	Centre Ceramique Maastricht (https://sketchfab.com/CentreCeramiqueMaastricht)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Antler Pick" (https://sketchfab.com/3d-models/antler-pick-497f2fdabecc44ecae461622d0450103) by Centre Ceramique Maastricht (https://sketchfab.com/CentreCeramiqueMaastricht) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
