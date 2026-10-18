@@ -46,6 +46,10 @@ editorial placement notes are reviewable there. The three Sketchfab hotspot
 vectors remain untouched beside their transformed local-export coordinates, so
 the export-root adjustment is auditable.
 
+Unresolved source material is kept out of the browser bundle. The assessment of
+the creator-supplied Centre Céramique photographs is recorded in
+`research/dijkman-source-note.md`.
+
 ## Technology
 
 - [Three.js](https://threejs.org/) for real-time 3D rendering

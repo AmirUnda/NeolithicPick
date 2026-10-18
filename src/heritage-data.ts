@@ -53,7 +53,6 @@ export interface HeritageRecord {
   metadata: readonly MetadataField[];
   sources: readonly Source[];
   annotations: readonly Annotation[];
-  privateResearchNote: string;
 }
 
 const commonSketchfabTarget = [0.163295, -0.254943, 1.181867] as const;
@@ -274,6 +273,4 @@ export const heritageRecord = {
       },
     },
   ],
-  privateResearchNote:
-    'Unresolved citation: Wim Dijkman, “Vuursteenmijnbouw in Rijckholt / Flint mining in Rijckholt,” Centre Céramique Maastricht exhibition publication. Confirm full title, year, publisher and the meaning of “21/22/23” before public use.',
 } satisfies HeritageRecord;
