@@ -181,7 +181,7 @@ export const heritageRecord = {
         placementOrigin: 'sketchfab',
       },
       camera: {
-        eye: [0.305954, 5.34108, -1.099258],
+        eye: [-1.27844, 2.165067, -8.175421],
         target: [0.113946, 0.428787, -1.474297],
       },
       sourceCamera: {

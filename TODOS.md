@@ -7,4 +7,5 @@ Informal shared notes for Alan and Codex.
       matrix on every frame.
 - [x] Show annotation 1 from the front profile so the overall form and all six
       pins remain visible.
-- [ ] Rework the selected-pin camera angles for annotations 3, 4, and 6.
+- [x] Match annotation 3 to the manually composed mining-use view.
+- [ ] Rework the selected-pin camera angles for annotations 4 and 6.
