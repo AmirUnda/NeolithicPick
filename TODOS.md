@@ -9,6 +9,6 @@ Informal shared notes for Alan and Codex.
       pins remain visible.
 - [x] Match annotation 3 to the manually composed mining-use view.
 - [x] Match annotation 4 to the manually composed Rijckholt mining-context view.
-- [ ] Rework the selected-pin camera angle for annotation 6.
+- [x] Match annotation 6 to the manually composed documentation-gap view.
 - [ ] Improve mobile responsiveness and require landscape orientation for the
       interactive viewer on mobile devices.

@@ -255,8 +255,8 @@ export const heritageRecord = {
         placementOrigin: 'editorial',
       },
       camera: {
-        eye: [-3.65, 0.88, 2.48],
-        target: [0.434283, 0.816804, -1.773127],
+        eye: [2.145971, -1.775357, -5.797553],
+        target: [0.349454, 0.348454, -1.573714],
       },
     },
   ],
