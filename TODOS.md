@@ -8,6 +8,7 @@ Informal shared notes for Alan and Codex.
 - [x] Show annotation 1 from the front profile so the overall form and all six
       pins remain visible.
 - [x] Match annotation 3 to the manually composed mining-use view.
-- [ ] Rework the selected-pin camera angles for annotations 4 and 6.
+- [x] Match annotation 4 to the manually composed Rijckholt mining-context view.
+- [ ] Rework the selected-pin camera angle for annotation 6.
 - [ ] Improve mobile responsiveness and require landscape orientation for the
       interactive viewer on mobile devices.
