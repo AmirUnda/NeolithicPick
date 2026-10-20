@@ -27,7 +27,7 @@
         ></div>
 
         <header class="viewer-header">
-          <p class="eyebrow">Digital heritage study</p>
+          <p class="eyebrow">Digital heritage study - Rijckholt</p>
           <h1 id="viewer-title">Neolithic<br />Antler Pick</h1>
         </header>
 
@@ -56,16 +56,19 @@
       </figure>
 
       <aside id="about" class="object-panel" tabindex="-1">
-        <header class="object-intro">
-          <div>
-            <p class="eyebrow">Neolithic · Rijckholt</p>
-            <h2>Antler pick</h2>
+        <nav class="annotation-index" aria-labelledby="annotation-index-title">
+          <div class="section-heading">
+            <p class="section-kicker">Guided reading</p>
+            <p id="annotation-index-title" class="section-kicker">
+              Six points of inquiry
+            </p>
           </div>
-          <p class="lede">
-            A photogrammetric record examined through visible evidence, archaeological
-            context and the limits of the surviving catalogue information.
+          <ul id="annotation-list" class="annotation-list"></ul>
+          <p class="placement-legend">
+            <span class="legend-mark source" aria-hidden="true"></span> Source-derived
+            <span class="legend-mark editorial" aria-hidden="true"></span> Editorial
           </p>
-        </header>
+        </nav>
 
         <section
           id="annotation-detail"
@@ -86,7 +89,7 @@
               aria-label="Close annotation"
               disabled
             >
-              ×
+              X
             </button>
           </div>
           <p id="annotation-detail-text" class="annotation-copy"></p>
@@ -103,22 +106,10 @@
           </div>
         </section>
 
-        <nav class="annotation-index" aria-labelledby="annotation-index-title">
-          <div class="section-heading">
-            <p class="section-kicker">Guided reading</p>
-            <h3 id="annotation-index-title">Six points of inquiry</h3>
-          </div>
-          <ul id="annotation-list" class="annotation-list"></ul>
-          <p class="placement-legend">
-            <span class="legend-mark source" aria-hidden="true"></span> Source-derived
-            <span class="legend-mark editorial" aria-hidden="true"></span> Editorial
-          </p>
-        </nav>
-
         <section class="record-section" aria-labelledby="record-title">
           <div class="section-heading">
             <p class="section-kicker">Object and model record</p>
-            <h3 id="record-title">What is documented</h3>
+            <p id="record-title" class="section-kicker">What is documented</p>
           </div>
           <dl id="metadata-list" class="metadata"></dl>
           <p class="record-note">
@@ -131,7 +122,7 @@
         <section class="sources-section" aria-labelledby="sources-title">
           <div class="section-heading">
             <p class="section-kicker">Evidence trail</p>
-            <h3 id="sources-title">Sources</h3>
+            <p id="sources-title" class="section-kicker">Sources</p>
           </div>
           <ul id="source-list" class="source-list"></ul>
         </section>

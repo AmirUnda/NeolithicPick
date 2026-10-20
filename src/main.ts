@@ -137,8 +137,9 @@ function renderDetail(annotation: Annotation | null): void {
   if (!annotation) {
     detailType.textContent = 'Annotation guide';
     detailTitle.textContent = 'Explore the object';
+    detailText.style.whiteSpace = 'pre-line';
     detailText.textContent =
-      'Choose a numbered marker or an entry below to examine the object, its archaeological context and the limits of the available record.';
+      'A photogrammetric record examined through visible evidence, archaeological context and the limits of the surviving catalogue information. \n Choose a numbered marker or an entry below to examine the object.';
     detailEvidence.textContent =
       'Six annotations · three source positions · three editorial positions';
     detailCounter.textContent = 'No annotation selected';
