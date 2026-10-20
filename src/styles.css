@@ -411,17 +411,11 @@ button:disabled {
 }
 
 .annotation-evidence,
-.annotation-placement,
 .record-note {
   margin-bottom: 0.65rem;
   color: #746b5f;
   font-size: 0.72rem;
   line-height: 1.55;
-}
-
-.annotation-placement {
-  padding-left: 0.75rem;
-  border-left: 2px solid #a28d70;
 }
 
 .inline-sources {
