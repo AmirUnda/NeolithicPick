@@ -283,10 +283,10 @@ h3 {
   pointer-events: none;
   transform: translate(calc(var(--marker-x) - 50%), calc(var(--marker-y) - 50%))
     scale(0.75);
+  will-change: transform, opacity;
   transition:
     opacity 160ms ease,
-    box-shadow 160ms ease,
-    transform 160ms ease;
+    box-shadow 160ms ease;
 }
 
 .annotation-marker[data-annotation-type='interpretation'] {
@@ -299,6 +299,9 @@ h3 {
 
 .annotation-marker[data-annotation-type='gap'] {
   --marker-color: var(--gap);
+}
+
+.annotation-marker[data-placement-origin='editorial'] {
   border-style: dashed;
 }
 
@@ -538,9 +541,16 @@ button:disabled {
   place-items: center;
   color: #26231e;
   background: var(--item-color);
+  border: 2px solid transparent;
   border-radius: 50%;
   font-size: 0.67rem;
   font-weight: 850;
+}
+
+.annotation-list-button[data-placement-origin='editorial'] .annotation-list-number {
+  background: #f3efe7;
+  border-color: var(--item-color);
+  border-style: dashed;
 }
 
 .annotation-list-type,

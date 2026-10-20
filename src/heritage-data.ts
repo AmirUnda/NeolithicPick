@@ -19,7 +19,6 @@ export interface CameraPose {
 export interface AnnotationAnchor {
   displayPosition: Vec3Tuple;
   placementOrigin: PlacementOrigin;
-  placementNote: string;
   sourcePosition?: Vec3Tuple;
 }
 
@@ -138,8 +137,6 @@ export const heritageRecord = {
       anchor: {
         displayPosition: [-0.415344, -0.301746, -1.858538],
         placementOrigin: 'editorial',
-        placementNote:
-          'Authored by raycasting onto the long projecting tine in the local export; paired with a wide whole-object view.',
       },
       camera: {
         eye: [7.79, 4.55, 10.97],
@@ -160,8 +157,6 @@ export const heritageRecord = {
       anchor: {
         displayPosition: [0.064029, 0.812739, 0.728805],
         placementOrigin: 'editorial',
-        placementNote:
-          'Authored by raycasting onto the visibly textured upper surface of the main beam in the local export.',
       },
       camera: {
         eye: [-1.72, 1.28, 2.54],
@@ -184,8 +179,6 @@ export const heritageRecord = {
         displayPosition: [0.113946, 0.428787, -1.474297],
         sourcePosition: [-1.5266, 0.00373, -0.199681],
         placementOrigin: 'sketchfab',
-        placementNote:
-          'Sketchfab’s “Material” hotspot, transformed through the export root matrix and verified against the published view.',
       },
       camera: {
         eye: [0.305954, 5.34108, -1.099258],
@@ -211,8 +204,6 @@ export const heritageRecord = {
         displayPosition: [-0.027676, 0.721837, 0.112794],
         sourcePosition: [-0.180585, 0.189397, 0.682682],
         placementOrigin: 'sketchfab',
-        placementNote:
-          'Sketchfab’s “Prehistoric Industry” hotspot, transformed through the export root matrix and verified against the published view.',
       },
       camera: {
         eye: [-0.139912, 2.739907, -2.104577],
@@ -238,8 +229,6 @@ export const heritageRecord = {
         displayPosition: [-0.699613, 0.074425, 1.719592],
         sourcePosition: [1.571566, -0.384301, 0.913503],
         placementOrigin: 'sketchfab',
-        placementNote:
-          'Sketchfab’s “The Dominant Culture” hotspot, transformed through the export root matrix and verified against the published view.',
       },
       camera: {
         eye: [-0.128808, 3.433433, -2.95371],
@@ -264,8 +253,6 @@ export const heritageRecord = {
       anchor: {
         displayPosition: [0.434283, 0.816804, -1.773127],
         placementOrigin: 'editorial',
-        placementNote:
-          'Thematic placement raycast onto the broad cut end; the research gap is not a physical feature.',
       },
       camera: {
         eye: [-3.65, 0.88, 2.48],

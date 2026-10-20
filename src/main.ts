@@ -28,9 +28,6 @@ const detailText = requireElement<HTMLParagraphElement>('#annotation-detail-text
 const detailEvidence = requireElement<HTMLParagraphElement>(
   '#annotation-detail-evidence',
 );
-const detailPlacement = requireElement<HTMLParagraphElement>(
-  '#annotation-detail-placement',
-);
 const detailSources = requireElement<HTMLUListElement>('#annotation-detail-sources');
 const detailCounter = requireElement<HTMLSpanElement>('#annotation-counter');
 const metadataList = requireElement<HTMLDListElement>('#metadata-list');
@@ -102,6 +99,7 @@ function renderAnnotationList(): void {
     button.className = 'annotation-list-button';
     button.dataset.annotationId = annotation.id;
     button.dataset.annotationType = annotation.type;
+    button.dataset.placementOrigin = annotation.anchor.placementOrigin;
     button.setAttribute('aria-pressed', 'false');
 
     const number = document.createElement('span');
@@ -115,7 +113,13 @@ function renderAnnotationList(): void {
     const title = document.createElement('span');
     title.className = 'annotation-list-title';
     title.textContent = annotation.title;
-    copy.append(label, title);
+    const placement = document.createElement('span');
+    placement.className = 'sr-only';
+    placement.textContent =
+      annotation.anchor.placementOrigin === 'editorial'
+        ? 'Editorial placement'
+        : 'Source-derived placement';
+    copy.append(label, title, placement);
     button.append(number, copy);
     button.addEventListener('click', () => selectAnnotation(annotation.id, 'push'));
     item.append(button);
@@ -137,8 +141,6 @@ function renderDetail(annotation: Annotation | null): void {
       'Choose a numbered marker or an entry below to examine the object, its archaeological context and the limits of the available record.';
     detailEvidence.textContent =
       'Six annotations · three source positions · three editorial positions';
-    detailPlacement.textContent =
-      'Every annotation is also available from the list below.';
     detailCounter.textContent = 'No annotation selected';
     detailSources.replaceChildren();
     return;
@@ -148,11 +150,6 @@ function renderDetail(annotation: Annotation | null): void {
   detailTitle.textContent = annotation.title;
   detailText.textContent = annotation.text;
   detailEvidence.textContent = `${annotation.evidence} · ${annotation.confidence} source confidence`;
-  detailPlacement.textContent = `${
-    annotation.anchor.placementOrigin === 'sketchfab'
-      ? 'Source-derived placement'
-      : 'Editorial placement'
-  }: ${annotation.anchor.placementNote}`;
   detailCounter.textContent = `${annotation.index} of ${heritageRecord.annotations.length}`;
 
   const sourceItems = annotation.sources.flatMap((id) => {

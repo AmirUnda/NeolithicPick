@@ -240,11 +240,16 @@ export class HeritageViewer {
       marker.className = 'annotation-marker';
       marker.dataset.annotationId = annotation.id;
       marker.dataset.annotationType = annotation.type;
+      marker.dataset.placementOrigin = annotation.anchor.placementOrigin;
       marker.dataset.visible = 'false';
       marker.dataset.active = 'false';
+      const placementLabel =
+        annotation.anchor.placementOrigin === 'editorial'
+          ? 'Editorial placement'
+          : 'Source-derived placement';
       marker.setAttribute(
         'aria-label',
-        `Annotation ${annotation.index}: ${annotation.title}`,
+        `Annotation ${annotation.index}: ${annotation.title}. ${placementLabel}.`,
       );
       marker.setAttribute('aria-pressed', 'false');
       marker.textContent = String(annotation.index);
@@ -397,6 +402,10 @@ export class HeritageViewer {
     }
     this.updateCameraAnimation(timestamp);
     this.controls.update();
+    // Keep HTML markers on the exact camera matrix used by this frame. Without
+    // this explicit update, projection can use the previous frame's inverse
+    // matrix while OrbitControls is moving or damping the camera.
+    this.camera.updateMatrixWorld();
     this.updateMarkers();
     this.renderer.render(this.scene, this.camera);
   }
