@@ -9,3 +9,5 @@ Informal shared notes for Alan and Codex.
       pins remain visible.
 - [x] Match annotation 3 to the manually composed mining-use view.
 - [ ] Rework the selected-pin camera angles for annotations 4 and 6.
+- [ ] Improve mobile responsiveness and require landscape orientation for the
+      interactive viewer on mobile devices.

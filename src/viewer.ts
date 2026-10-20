@@ -32,6 +32,8 @@ interface MarkerRecord {
   worldPosition: THREE.Vector3;
 }
 
+const DEFAULT_CAMERA_OFFSET: Vec3Tuple = [-8.948471, 3.57456, 1.041276];
+
 function tupleToVector(tuple: Vec3Tuple): THREE.Vector3 {
   return new THREE.Vector3(tuple[0], tuple[1], tuple[2]);
 }
@@ -265,6 +267,7 @@ export class HeritageViewer {
 
   private frameModel(model: THREE.Object3D): void {
     const sourceBounds = new THREE.Box3().setFromObject(model);
+    const sourceCentre = sourceBounds.getCenter(new THREE.Vector3());
     const transform = computeNormalizationTransform({
       min: sourceBounds.min.toArray() as unknown as Vec3Tuple,
       max: sourceBounds.max.toArray() as unknown as Vec3Tuple,
@@ -276,29 +279,30 @@ export class HeritageViewer {
 
     const framedBounds = new THREE.Box3().setFromObject(model);
     const framedSize = framedBounds.getSize(new THREE.Vector3());
-    const framedCentre = framedBounds.getCenter(new THREE.Vector3());
     const radius = framedSize.length() * 0.5;
 
-    this.controls.target.copy(framedCentre);
     this.controls.minDistance = Math.max(radius * 0.55, 0.5);
     this.controls.maxDistance = Math.max(radius * 5, 8);
 
-    const verticalFov = THREE.MathUtils.degToRad(this.camera.fov);
-    const distance = radius / Math.sin(verticalFov * 0.5);
+    this.defaultPose = {
+      eye: sourceCentre
+        .clone()
+        .add(tupleToVector(DEFAULT_CAMERA_OFFSET))
+        .toArray() as unknown as Vec3Tuple,
+      target: sourceCentre.toArray() as unknown as Vec3Tuple,
+    };
+    this.camera.position
+      .copy(tupleToVector(this.defaultPose.eye))
+      .applyMatrix4(model.matrixWorld);
+    this.controls.target
+      .copy(tupleToVector(this.defaultPose.target))
+      .applyMatrix4(model.matrixWorld);
+
+    const distance = this.camera.position.distanceTo(this.controls.target);
     this.camera.near = Math.max(distance / 100, 0.01);
     this.camera.far = Math.max(distance * 20, 100);
-    this.camera.position
-      .set(0.72, 0.42, 1)
-      .normalize()
-      .multiplyScalar(distance * 1.08)
-      .add(framedCentre);
     this.camera.updateProjectionMatrix();
     this.controls.update();
-
-    this.defaultPose = {
-      eye: this.camera.position.toArray() as unknown as Vec3Tuple,
-      target: this.controls.target.toArray() as unknown as Vec3Tuple,
-    };
   }
 
   private updateMarkerWorldPositions(): void {
