@@ -12,3 +12,7 @@ Informal shared notes for Alan and Codex.
 - [x] Match annotation 6 to the manually composed documentation-gap view.
 - [ ] Improve mobile responsiveness and require landscape orientation for the
       interactive viewer on mobile devices.
+- [ ] Publish the production build as a live GitHub Pages deployment.
+- [ ] Add a prominent “View live 3D experience” link near the top of the
+      repository README.
+- [ ] Add a screenshot or short recording to the README as a visual fallback.
