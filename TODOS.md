@@ -10,9 +10,11 @@ Informal shared notes for Alan and Codex.
 - [x] Match annotation 3 to the manually composed mining-use view.
 - [x] Match annotation 4 to the manually composed Rijckholt mining-context view.
 - [x] Match annotation 6 to the manually composed documentation-gap view.
-- [ ] Improve mobile responsiveness and require landscape orientation for the
-      interactive viewer on mobile devices.
-- [ ] Publish the production build as a live GitHub Pages deployment.
+- [ ] (NTH) Improve mobile responsiveness and require landscape orientation for the interactive viewer on mobile devices.
+- [x] Configure GitHub Actions to build and deploy the production site to
+      GitHub Pages.
+- [ ] After merging to `main`, enable GitHub Pages with GitHub Actions as its
+      source and verify the public deployment.
 - [ ] Add a prominent “View live 3D experience” link near the top of the
       repository README.
 - [ ] Add a screenshot or short recording to the README as a visual fallback.

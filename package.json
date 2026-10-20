@@ -10,6 +10,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc --noEmit && vite build",
+    "build:pages": "tsc --noEmit && vite build --base=/NeolithicPick/",
     "preview": "vite preview",
     "test": "vitest run",
     "typecheck": "tsc --noEmit --pretty false",
